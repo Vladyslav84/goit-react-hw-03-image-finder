@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import Container from './Components/Container/Container'
+import Container from './Components/Container/Container';
 import SearchBar from './Components/SearchBar/SearchBar';
 import axios from 'axios';
 import ImageGallery from './Components/ImageGallery/ImageGallery'
 import ImageGalleryItem from './Components/ImageGalleryItem/ImageGalleryItem'
+import Button from './Components/Button/Button';
 // import apiRequest from './Components/apiRequest';
 
 // console.log(ImageGallery)
@@ -19,9 +20,9 @@ class App extends Component {
 
   };
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
 
-    if (this.state.imgName.trim() !== '')
+    if (this.state.imgName.trim() !== '' && this.state.imgName !==prevState.imgName)
     {
 
       axios.get(`https://pixabay.com/api/?key=${ this.state.PIXABAY_KEY }&q=${ this.state.imgName }&image_type=photo&page=${ this.state.pageNum }&per_page=${ this.state.perPage }&image_type=photo&orientation=horizontal&`)
@@ -40,20 +41,28 @@ class App extends Component {
 
   componentDidMount() {
 
+   
   };
 
   searchBarInputValueHandler = (InputValue) => {
 
-    if (InputValue.trim() !== '')
-    {
+    if (InputValue.trim() !== '') {
       this.setState({
         imgName: InputValue,
       })
     }
-  }
+  };
+
+  loadMoreBtnHandler =()=>{
+// console.log(state)
+    this.setState(prevState => ({
+      pageNum: prevState.pageNum +=1,
+    }))
+      
+  };
 
   render() {
-
+// console.log(this.state.pageNum)
     // console.log(this.props.SearchBar);
     // console.log(this.state.imgGallery);
     return (
@@ -64,6 +73,7 @@ class App extends Component {
         >
           <ImageGalleryItem />
         </ImageGallery>
+        <Button onLoadMore={this.loadMoreBtnHandler}/>
       </Container>
 
     );
