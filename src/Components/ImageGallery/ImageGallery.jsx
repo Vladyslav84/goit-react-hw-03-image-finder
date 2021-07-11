@@ -1,8 +1,9 @@
 import React from 'react';
 import s from './ImageGallery.module.css';
+import PropTypes from 'prop-types';
 
-const ImageGallery = ({ imgArr, children, onSelect }) => {
-    // console.log(imgArr);
+function ImageGallery({ imgArr, children, onSelect }) {
+
     return (
 
         <ul className={s.imageGallary}>
@@ -15,5 +16,7 @@ const ImageGallery = ({ imgArr, children, onSelect }) => {
         </ul >
     )
 }
-
+ImageGallery.prototype = {
+    imgArr: PropTypes.arrayOf(PropTypes.object).isRequired,
+}
 export default ImageGallery;
