@@ -8,7 +8,6 @@ import Button from './Components/Button/Button';
 import Modal from './Components/Modal/Modal';
 // import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
-import PropTypes from 'prop-types';
 
 
 class App extends Component {
@@ -157,6 +156,7 @@ class App extends Component {
     );
   }
 }
+
 
 export default App;
 
