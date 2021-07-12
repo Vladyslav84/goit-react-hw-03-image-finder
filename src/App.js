@@ -8,6 +8,7 @@ import Button from './Components/Button/Button';
 import Modal from './Components/Modal/Modal';
 // import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
+import s from './App.module.css';
 
 
 class App extends Component {
@@ -136,15 +137,15 @@ class App extends Component {
         </Modal>}
 
         {this.state.status === 'pending' &&
-          <>
-            <Loader
+          <div className = {s.loader}>
+          <Loader
               type="TailSpin"
               color="#00BFFF"
-              height={300}
-              width={300}
+              height={200}
+              width={200}
             />
-            Loading...
-          </>
+            <p className = {s.p}>Loading...</p>
+          </div>
         }
 
       </Container>
