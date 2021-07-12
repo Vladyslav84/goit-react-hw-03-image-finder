@@ -26,35 +26,35 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
 
+    if (this.state.imgGallery.length === 0 && this.state.status === 'resolved')
+      {
 
+      alert(`Sorry, we did not find such pictures ${this.state.imgName}`)
+      
+      this.setState({
+        status: 'idle'
+      })
 
-    if (this.state.imgName.trim() !== '' && this.state.imgName !== prevState.imgName || this.state.pageNum !== prevState.pageNum)
+      }
+
+    if (this.state.status === 'pending')
     {
-      this.setState({ status: 'pending' })
-
       axios.get(`https://pixabay.com/api/?key=${ this.state.PIXABAY_KEY }&q=${ this.state.imgName }&image_type=photo&page=${ this.state.pageNum }&per_page=${ this.state.perPage }&image_type=photo&orientation=horizontal&`)
         .then(function (response) {
 
           return response.data.hits;
 
-        })
-        .then(
-          NewImgGallery => this.setState(prevState => ({
+        }
+      ).then(NewImgGallery =>
+            this.setState(prevState => ({
             imgGallery: [...prevState.imgGallery, ...NewImgGallery],
             status: 'resolved',
           }))
 
-        )
+      )
         .catch(
           error => this.setState({ error: 'error', status: "rejected" })
         )
-
-      // if (this.state.imgGallery.length === 0)
-      // {
-
-      //   alert(`Sorry, we did not find such pictures ${ this.state.imgName }`)
-
-      // }
 
     }
 
@@ -63,13 +63,11 @@ class App extends Component {
       behavior: 'smooth',
     });
 
-
   };
 
   componentDidMount() {
 
   };
-
 
   searchBarInputValueHandler = (InputValue) => {
 
@@ -77,6 +75,7 @@ class App extends Component {
     {
       this.setState({
         imgName: InputValue,
+        status: "pending"
 
       })
     }
@@ -89,15 +88,13 @@ class App extends Component {
           pageNum: 1,
         })
       }
-
     }
-
   };
 
   loadMoreBtnHandler = () => {
     this.setState(prevState => ({
       pageNum: prevState.pageNum += 1,
-      // status: "pending"
+      status: "pending"
     }))
 
   };
@@ -112,10 +109,9 @@ class App extends Component {
 
   toggleMdl = (evt) => {
 
-    // console.log(evt.target.nodeName === 'IMG');
     this.setState(({ selectedObg }) => ({
       selectedObg: null,
-      // status: 'idle'
+
     }))
   };
 
@@ -129,7 +125,7 @@ class App extends Component {
           onSelect={this.handleSelectObg}
         >
         </ImageGallery>
-        {this.state.imgName !== '' && <Button onLoadMore={this.loadMoreBtnHandler} />}
+        {this.state.status === 'resolved' && <Button onLoadMore={this.loadMoreBtnHandler} />}
 
         {this.state.selectedObg && <Modal onClose={this.toggleMdl} >
           <img src={this.state.selectedObg.largeImageURL} alt={this.state.selectedObg.largeImageURL} />
@@ -156,7 +152,6 @@ class App extends Component {
     );
   }
 }
-
 
 export default App;
 
