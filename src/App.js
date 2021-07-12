@@ -35,7 +35,6 @@ class App extends Component {
       this.setState({
         status: 'idle'
       })
-
       }
 
     if (this.state.status === 'pending')
