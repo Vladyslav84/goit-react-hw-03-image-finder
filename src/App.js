@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import Container from './Components/Container/Container';
 import SearchBar from './Components/SearchBar/SearchBar';
-import axios from 'axios';
 import ImageGallery from './Components/ImageGallery/ImageGallery'
 // import ImageGalleryItem from './Components/ImageGalleryItem/ImageGalleryItem'
 import Button from './Components/Button/Button';
 import Modal from './Components/Modal/Modal';
-// import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
 import s from './App.module.css';
-
+import { fetchCountries } from './Components/Api/api'
 
 class App extends Component {
 
@@ -17,15 +15,13 @@ class App extends Component {
     imgGallery: [],
     imgName: '',
     pageNum: 1,
-    perPage: 12,
-    PIXABAY_KEY: '21694115-487a2c793b7208539d5182bab',
     selectedObg: null,
     status: 'idle',
     error: null,
-
+  
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
 
     if (this.state.imgGallery.length === 0 && this.state.status === 'resolved')
       {
@@ -39,23 +35,19 @@ class App extends Component {
 
     if (this.state.status === 'pending')
     {
-      axios.get(`https://pixabay.com/api/?key=${ this.state.PIXABAY_KEY }&q=${ this.state.imgName }&image_type=photo&page=${ this.state.pageNum }&per_page=${ this.state.perPage }&image_type=photo&orientation=horizontal&`)
-        .then(function (response) {
 
-          return response.data.hits;
-
-        }
-      ).then(NewImgGallery =>
-            this.setState(prevState => ({
-            imgGallery: [...prevState.imgGallery, ...NewImgGallery],
-            status: 'resolved',
-          }))
-
-      )
-        .catch(
-          error => this.setState({ error: 'error', status: "rejected" })
-        )
-
+      try {
+        await fetchCountries(this.state.imgName, this.state.pageNum)
+        .then(NewImgGallery =>
+        this.setState(prevState => ({
+        imgGallery: [...prevState.imgGallery, ...NewImgGallery],
+        status: 'resolved',
+        })))
+      } catch {
+        alert(`Pixabay is dead`)
+        this.setState({ error: 'error', status: "rejected" })
+     }
+             
     }
 
     window.scrollTo({
@@ -65,9 +57,6 @@ class App extends Component {
 
   };
 
-  componentDidMount() {
-
-  };
 
   searchBarInputValueHandler = (InputValue) => {
 
@@ -101,9 +90,10 @@ class App extends Component {
 
   handleSelectObg = (obg) => {
 
-    this.setState({
-      selectedObg: obg,
-      status: 'pending'
+      this.setState({
+        selectedObg: obg,
+        showLoader: true
+      
     })
   }
 
@@ -111,12 +101,11 @@ class App extends Component {
 
     this.setState(({ selectedObg }) => ({
       selectedObg: null,
-
+     
     }))
   };
 
   render() {
-
     return (
       <Container>
         <SearchBar onSubmit={this.searchBarInputValueHandler} />
@@ -135,10 +124,10 @@ class App extends Component {
           >Close</button>
         </Modal>}
 
-        {this.state.status === 'pending' &&
+        {this.state.status === 'pending' && 
           <div className = {s.loader}>
           <Loader
-              type="TailSpin"
+              type="Puff"
               color="#00BFFF"
               height={200}
               width={200}
